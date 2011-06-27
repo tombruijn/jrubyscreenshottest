@@ -11,13 +11,6 @@ class TrayApplication
   def initialize(name = 'Tray Application')
     @menu_items = []
     @name       = name
-    
-    frame = JFrame.new 'Test Frame'
-    frame.setSize(200, 200)
-     
-    frame.defaultCloseOperation = JFrame::EXIT_ON_CLOSE
-    frame.visible = true
-    
   end
 
   def item(label, &block)

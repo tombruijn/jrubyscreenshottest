@@ -15,7 +15,7 @@ class Screenshot
     image     = robot.create_screen_capture(rectangle)
     
     time_now = Time.now
-    file  = java::io::File.new("screenshot_#{time_now.strftime('%Y_%m_%d_%H_%M_%S')}.png")
+    file  = java::io::File.new("../output/screenshot_#{time_now.strftime('%Y_%m_%d_%H_%M_%S')}.png")
     ImageIO::write(image, "png", file)
 
     # Open the file in the users default application for the given file type
