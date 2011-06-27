@@ -9,7 +9,8 @@ class Layer
   import javax.swing.JFrame
   import javax.swing.JLabel
   import java.awt.Color
-  import com.sun.awt.AWTUtilities
+  # import com.sun.awt.AWTUtilities
+  java_import 'com.sun.awt.AWTUtilities'
 
   def self.start()
     robot     = Robot.new
@@ -25,11 +26,9 @@ class Layer
     frame.get_content_pane().add(JLabel.new("wa"))
     frame.set_undecorated(true)
     # frame.setBackground(Color.new(0,0,0,0))
-    # frame.set_opacity(0.5)
-    if AWTUtilities.isTranslucencySupported frame
-      AWTUtilities.setWindowOpacity(frame, 0.5)
-    end
+    # frame.set_opacity(0.5)    
     # frame.setBackground(Color.new(1.0, 1.0, 1.0, 0.25))
     frame.visible = true
+    frame
   end
 end
