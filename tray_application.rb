@@ -3,6 +3,7 @@ class TrayApplication
   include Java
   import java.awt.TrayIcon
   import java.awt.Toolkit
+  import javax.swing.JFrame
 
   attr_accessor :icon_filename
   attr_accessor :menu_items
@@ -10,6 +11,13 @@ class TrayApplication
   def initialize(name = 'Tray Application')
     @menu_items = []
     @name       = name
+    
+    frame = JFrame.new 'Test Frame'
+    frame.setSize(200, 200)
+     
+    frame.defaultCloseOperation = JFrame::EXIT_ON_CLOSE
+    frame.visible = true
+    
   end
 
   def item(label, &block)
