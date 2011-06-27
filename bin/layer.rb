@@ -8,9 +8,8 @@ class Layer
   import javax.imageio.ImageIO
   import javax.swing.JFrame
   import javax.swing.JLabel
-  import java.awt.Color
-  # import com.sun.awt.AWTUtilities
-  java_import 'com.sun.awt.AWTUtilities'
+  import java.awt.MouseInfo
+  import java.awt.PointerInfo
 
   def self.start()
     robot     = Robot.new
@@ -19,16 +18,15 @@ class Layer
     # rectangle = Rectangle.new(0, 0, dim.get_width, dim.get_height)
     # image     = robot.create_screen_capture(rectangle)
     
-    frame = JFrame.new 'Transparant layer'
-    frame.set_bounds(0,0,dim.get_width, dim.get_height)
-    frame.default_close_operation = JFrame::EXIT_ON_CLOSE
+    @frame = JFrame.new 'Transparant layer'
+    @frame.set_bounds 0,0,dim.get_width, dim.get_height
+    @frame.default_close_operation = JFrame::EXIT_ON_CLOSE
     
-    frame.get_content_pane().add(JLabel.new("wa"))
-    frame.set_undecorated(true)
-    # frame.setBackground(Color.new(0,0,0,0))
-    # frame.set_opacity(0.5)    
-    # frame.setBackground(Color.new(1.0, 1.0, 1.0, 0.25))
-    frame.visible = true
-    frame
+    @frame.set_undecorated true
+    @frame.visible = true
+    
+    @frame.get_content_pane().add(JLabel.new("#{MouseInfo.getPointerInfo().getLocation()}"))
+    
+    @frame
   end
 end
