@@ -35,7 +35,7 @@ class Layer < JFrame
   end
   
   def cg
-    can = MyCanvas.new @frame
+    can = MyCanvas.new self
     action = MouseAction.new(can)
     can.addMouseListener action
     can.addMouseMotionListener action
@@ -47,11 +47,11 @@ import java.awt.event.MouseAdapter
 import java.awt.Color
 class MyCanvas < JComponent
   include java.awt.event
+  attr_accessor :frame
   
-  @frame
-  def initialize(frame)
+  def initialize(f)
     super()
-    @frame = frame
+    self.frame = f
   end
   
   def draw_rect(x,y,x2,y2)
@@ -64,39 +64,44 @@ class MyCanvas < JComponent
     end
   end
   
+  def close
+    self.frame.set_visible(false)
+  end
+  
 end
 
 class MouseAction < MouseAdapter
-  @fr = nil
-  @startpoint = nil
-  def initialize(frame)
+  attr_accessor :canvas, :startpoint
+  
+  def initialize(c)
     super()
-    @fr = frame
+    self.canvas = c
   end
 
   def mousePressed(e)
-    @startpoint = e.get_point
+    self.startpoint = e.get_point
   end
   
   def mouseDragged(e)
-    @fr.draw_rect(@startpoint.x,@startpoint.y,e.get_point().x,e.get_point().y)
+    self.canvas.draw_rect(self.startpoint.x,self.startpoint.y,e.get_point().x,e.get_point().y)
   end
 
   def mouseReleased(e)
-    @fr.draw_rect(@startpoint.x,@startpoint.y,e.get_point().x,e.get_point().y)
+    self.canvas.draw_rect(self.startpoint.x,self.startpoint.y,e.get_point().x,e.get_point().y)
+    self.canvas.close()
     width = 200
     height = 200
-    if @startpoint.x < e.get_point().x
-      width = e.get_point().x - @startpoint.x
-      height = e.get_point().y - @startpoint.y
+    if self.startpoint.x < e.get_point().x
+      width = e.get_point().x - self.startpoint.x
+      height = e.get_point().y - self.startpoint.y
     else
-      width = @startpoint.x - e.get_point().x
-      height = @startpoint.y - e.get_point().y
+      width = self.startpoint.x - e.get_point().x
+      height = self.startpoint.y - e.get_point().y
     end
     # Create screenshot but cut off the red outer rectangle
     width -= 1
-    height -= 1 
-    Screenshot.capture_section(@startpoint.x-1,@startpoint.y-1,width,height)
+    height -= 1
+    Screenshot.capture_section(self.startpoint.x-1,self.startpoint.y-1,width,height)
   end
   
 end
