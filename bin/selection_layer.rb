@@ -10,6 +10,7 @@ import java.awt.PointerInfo
 import javax.swing.JFrame
 import javax.swing.JComponent
 import java.awt.event.MouseAdapter
+import java.awt.Graphics2D
 
 class SelectionLayer < JFrame
 
@@ -51,13 +52,28 @@ class SelectionCanvas < JComponent
   
   def draw_rect(x,y,x2,y2)
     g = get_graphics
+    g.clear_rect(0,0,self.frame.get_size.width,self.frame.get_size.height)
     g.setColor(Color.red)
-    # Left to right or right to left drag?
+    
+    # Default behavior of dragging is from top left to bottom right
+    width = 0
+    height = 0
     if x < x2
-      g.drawRect(x, y, x2-x, y2-y)
+      width = x2 - x
     else
-      g.drawRect(x2, y2, x-x2, y-y2)
+      width = x - x2
+      # Resetting startpoint when dragging to the left side on your screen
+      x = x - width
     end
+    if y < y2
+      height = y2 - y
+    else
+      height = y - y2
+      # Resetting startpoint when dragging to the top side on your screen
+      y = y - height
+    end
+    # Create selection rectangle
+    g.drawRect(x, y, width, height)
   end
   
   def close
