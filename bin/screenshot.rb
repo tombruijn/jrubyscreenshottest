@@ -22,4 +22,20 @@ class Screenshot
     desktop = Desktop.get_desktop
     desktop.open(file)
   end
+  
+  def self.capture_section(x,y,width,height)
+    robot     = Robot.new
+    toolkit   = Toolkit.get_default_toolkit
+    dim       = toolkit.get_screen_size
+    rectangle = Rectangle.new(x, y, width, height)
+    image     = robot.create_screen_capture(rectangle)
+    
+    time_now = Time.now
+    file  = java::io::File.new("../output/screenshot_#{time_now.strftime('%Y_%m_%d_%H_%M_%S')}.png")
+    ImageIO::write(image, "png", file)
+
+    # Open the file in the users default application for the given file type
+    desktop = Desktop.get_desktop
+    desktop.open(file)
+  end
 end
