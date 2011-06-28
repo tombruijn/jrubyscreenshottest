@@ -6,7 +6,7 @@ app = TrayApplication.new("Screenshot grabber")
 app.icon_filename = '../icon.gif'
 
 app.item('Take Screenshot') do
-  frame = SelectionLayer.new
+  frame = SelectionLayer.new(nil)
   begin
     AWTUtilities.setWindowOpacity(frame, (0.8).to_f)
   rescue

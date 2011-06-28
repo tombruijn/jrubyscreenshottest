@@ -13,8 +13,8 @@ import java.awt.event.MouseAdapter
 
 class SelectionLayer < JFrame
 
-  def initialize
-    super('Transparant layer')
+  def initialize(name = "Transparent layer")
+    super(name)
     
     # Get the size of the screen
     robot     = Robot.new
@@ -45,7 +45,7 @@ class SelectionCanvas < JComponent
   attr_accessor :frame
   
   def initialize(f)
-    super
+    super()
     self.frame = f
   end
   
@@ -70,7 +70,7 @@ class MouseAction < MouseAdapter
   attr_accessor :canvas, :startpoint
   
   def initialize(c)
-    super
+    super()
     self.canvas = c
   end
 
