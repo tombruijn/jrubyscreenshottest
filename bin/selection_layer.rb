@@ -13,7 +13,7 @@ import javax.swing.JComponent
 import java.awt.MouseInfo
 import java.awt.PointerInfo
 
-class Layer < JFrame
+class SelectionLayer < JFrame
 
   def self.start()
     robot     = Robot.new
@@ -22,7 +22,7 @@ class Layer < JFrame
     # rectangle = Rectangle.new(0, 0, dim.get_width, dim.get_height)
     # image     = robot.create_screen_capture(rectangle)
     
-    @frame = Layer.new 'Transparant layer'
+    @frame = SelectionLayer.new 'Transparant layer'
     @frame.set_bounds 0,0,dim.get_width, dim.get_height
     # @frame.default_close_operation = JFrame::EXIT_ON_CLOSE
     
@@ -35,7 +35,7 @@ class Layer < JFrame
   end
   
   def cg
-    can = MyCanvas.new self
+    can = SelectionCanvas.new self
     action = MouseAction.new(can)
     can.addMouseListener action
     can.addMouseMotionListener action
@@ -45,7 +45,7 @@ end
 
 import java.awt.event.MouseAdapter
 import java.awt.Color
-class MyCanvas < JComponent
+class SelectionCanvas < JComponent
   include java.awt.event
   attr_accessor :frame
   
