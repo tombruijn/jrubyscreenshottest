@@ -7,11 +7,6 @@ app.icon_filename = '../icon.gif'
 
 app.item('Take Screenshot') do
   frame = SelectionLayer.new(nil)
-  begin
-    AWTUtilities.setWindowOpacity(frame, (0.3).to_f)
-  rescue
-    puts "ERROR: Transparant layer not supported. Running GNOME?"
-  end
 end
 
 app.item('Exit') { java.lang.System::exit(0) }

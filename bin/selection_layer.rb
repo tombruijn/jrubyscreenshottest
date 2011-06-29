@@ -13,12 +13,13 @@ import java.awt.event.MouseAdapter
 import java.awt.Graphics2D
 
 class SelectionLayer < JFrame
+  
+  attr_accessor :canvas
 
   def initialize(name = "Transparent layer")
     super(name)
     
     # Get the size of the screen
-    robot     = Robot.new
     toolkit   = Toolkit.get_default_toolkit
     dim       = toolkit.get_screen_size
     
@@ -26,16 +27,24 @@ class SelectionLayer < JFrame
     self.set_bounds(0,0,dim.get_width, dim.get_height)
     # No borders
     self.set_undecorated(true)
-    self.visible = true
     
     # Add a draw panel to make something selectable
-    can = SelectionCanvas.new(self)
+    self.canvas = SelectionCanvas.new(self)
       # MouseAction records mouse movements
-      action = MouseAction.new(can)
-      can.addMouseListener(action)
-      can.addMouseMotionListener(action)
-    getContentPane.add(can)
+      action = MouseAction.new(self.canvas)
+      self.canvas.addMouseListener(action)
+      self.canvas.addMouseMotionListener(action)
+    getContentPane.add(self.canvas)
 
+    begin
+      AWTUtilities.setWindowOpacity(self, (0.3).to_f)
+    rescue
+      self.canvas.transparency_illusion
+      puts "ERROR: Transparant layer not supported. Running GNOME?"
+      puts "GNOME fix running, more CPU intensive, sorry."
+    end
+
+    self.set_visible(true)
     self # Needed to make the frame transparent later
   end
 
@@ -43,16 +52,34 @@ end
 
 class SelectionCanvas < JComponent
   include java.awt.event
-  attr_accessor :frame
+  attr_accessor :frame, :image, :transparency_supported
   
   def initialize(f)
     super()
     self.frame = f
+    self.transparency_supported = true
+  end
+  
+  def transparency_illusion
+    self.transparency_supported = false
+    toolkit   = Toolkit.get_default_toolkit
+    dim       = toolkit.get_screen_size
+    
+    robot     = Robot.new
+    rectangle = Rectangle.new(0,0, dim.get_width, dim.get_height)
+    self.image= robot.create_screen_capture(rectangle)
+  end
+  
+  def paint(g)
+    if not self.transparency_supported
+      g.clear_rect(0,0,self.frame.get_size.width,self.frame.get_size.height)
+      g.draw_image(self.image,0,0,nil)
+    end
   end
   
   def draw_rect(x,y,x2,y2)
     g = get_graphics
-    g.clear_rect(0,0,self.frame.get_size.width,self.frame.get_size.height)
+    paint(g) # Restore layer => Remove previous rectangle
     g.setColor(Color.red)
     
     # Default behavior of dragging is from top left to bottom right
