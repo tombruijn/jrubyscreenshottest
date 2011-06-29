@@ -50,9 +50,26 @@ class SelectionLayer < JFrame
 
 end
 
+import java.util.Timer
+import java.util.TimerTask
 class SelectionCanvas < JComponent
   include java.awt.event
-  attr_accessor :frame, :image, :transparency_supported
+  attr_accessor :frame, :image, :transparency_supported, :timer
+
+  class Task < TimerTask
+    attr_accessor :canvas
+    def initialize(canvas)
+      super()
+      self.canvas = canvas
+    end
+    def run
+      puts "da"
+      self.canvas.frame.set_visible(false)
+      self.canvas.transparency_illusion()
+      self.canvas.frame.set_visible(true)
+      self.canvas.paint(self.canvas.get_graphics)
+    end
+  end
   
   def initialize(f)
     super()
@@ -72,6 +89,10 @@ class SelectionCanvas < JComponent
   
   def paint(g)
     if not self.transparency_supported
+      if self.timer.nil?
+        self.timer = Timer.new
+        self.timer.schedule(Task.new(self),0,1000)
+      end
       g.clear_rect(0,0,self.frame.get_size.width,self.frame.get_size.height)
       g.draw_image(self.image,0,0,nil)
     end
@@ -104,6 +125,7 @@ class SelectionCanvas < JComponent
   end
   
   def close
+    self.timer.stop
     self.frame.set_visible(false)
   end
   
