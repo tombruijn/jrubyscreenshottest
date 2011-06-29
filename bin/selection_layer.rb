@@ -76,15 +76,9 @@ class SelectionCanvas < JComponent
       g.draw_image(self.image,0,0,nil)
     end
   end
-  
-  def draw_rect(x,y,x2,y2)
-    g = get_graphics
-    paint(g) # Restore layer => Remove previous rectangle
-    g.setColor(Color.red)
-    
+
+  def get_coordinates(x,y,x2,y2)
     # Default behavior of dragging is from top left to bottom right
-    width = 0
-    height = 0
     if x < x2
       width = x2 - x
     else
@@ -99,8 +93,18 @@ class SelectionCanvas < JComponent
       # Resetting startpoint when dragging to the top side on your screen
       y = y - height
     end
+    { :x => x, :y => y, :width => width, :height => height }
+  end
+  
+  def draw_rect(x,y,width,height)
+    g = get_graphics
+    paint(g) # Restore layer => Remove previous rectangle
+    g.setColor(Color.red)
+    
+    c = get_coordinates(x,y,width,height)
+    
     # Create selection rectangle
-    g.drawRect(x, y, width, height)
+    g.drawRect(c[:x], c[:y], c[:width], c[:height])
   end
   
   def close
@@ -110,7 +114,7 @@ class SelectionCanvas < JComponent
 end
 
 class MouseAction < MouseAdapter
-  attr_accessor :canvas, :startpoint
+  attr_accessor :canvas, :x, :y
   
   def initialize(c)
     super()
@@ -119,37 +123,25 @@ class MouseAction < MouseAdapter
 
   def mousePressed(e)
     # Save startpoint, needed for creating a screenshot
-    self.startpoint = e.get_point
+    self.x = e.get_point.x
+    self.y = e.get_point.y
   end
   
   def mouseDragged(e)
     # Draw selection
-    self.canvas.draw_rect(self.startpoint.x,self.startpoint.y,e.get_point().x,e.get_point().y)
+    self.canvas.draw_rect(self.x,self.y,e.get_point().x,e.get_point().y)
   end
 
   def mouseReleased(e)
     # Draw final selection
-    self.canvas.draw_rect(self.startpoint.x,self.startpoint.y,e.get_point().x,e.get_point().y)
+    self.canvas.draw_rect(self.x,self.y,e.get_point().x,e.get_point().y)
     # Exit layer
     self.canvas.close()
-    
-    # Default size, just in case something fails
-    width = 200
-    height = 200
-    
-    # Left to right or right to left drag?
-    if self.startpoint.x < e.get_point().x
-      width = e.get_point().x - self.startpoint.x
-      height = e.get_point().y - self.startpoint.y
-    else
-      width = self.startpoint.x - e.get_point().x
-      height = self.startpoint.y - e.get_point().y
-    end
+
+    c = self.canvas.get_coordinates(self.x, self.y, e.get_point.x, e.get_point.y)
     
     # Create screenshot but cut off the red outer rectangle
-    width -= 1
-    height -= 1
-    Screenshot.capture_section(self.startpoint.x-1,self.startpoint.y-1,width,height)
+    Screenshot.capture_section(c[:x], c[:y], c[:width], c[:height])
   end
   
 end
