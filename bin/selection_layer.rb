@@ -62,12 +62,9 @@ class SelectionCanvas < JComponent
   
   def transparency_illusion
     self.transparency_supported = false
-    toolkit   = Toolkit.get_default_toolkit
-    dim       = toolkit.get_screen_size
-    
-    robot     = Robot.new
-    rectangle = Rectangle.new(0,0, dim.get_width, dim.get_height)
-    self.image= robot.create_screen_capture(rectangle)
+    screenshot = Screenshot.new
+    screenshot.capture_fullscreen_image
+    self.image =  screenshot.image
   end
   
   def paint(g)
@@ -136,7 +133,7 @@ class MouseAction < MouseAdapter
 
   def mouseReleased(e)
     # Draw final selection
-    self.canvas.draw_rect(self.x,self.y,e.get_point().x,e.get_point().y)
+    # self.canvas.draw_rect(self.x,self.y,e.get_point().x,e.get_point().y)
     # Exit layer
     self.canvas.close()
 
