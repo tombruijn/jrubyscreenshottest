@@ -71,8 +71,10 @@ class SelectionCanvas < JComponent
   end
   
   def paint(g)
+    # Clear the layer (selection rectangle and background image (if fix is applied))
+    g.clear_rect(0,0,self.frame.get_size.width,self.frame.get_size.height)
     if not self.transparency_supported
-      g.clear_rect(0,0,self.frame.get_size.width,self.frame.get_size.height)
+      # Fake the background, it doesn't work so smoothly
       g.draw_image(self.image,0,0,nil)
     end
   end
