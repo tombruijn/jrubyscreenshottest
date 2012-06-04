@@ -1,6 +1,11 @@
 require 'tray_application'
 require 'selection_layer'
+require 'screenshot'
+require 'dropbox_handler'
 import com.sun.awt.AWTUtilities
+
+dropbox = DropboxHandler.new
+dropbox.upload
 
 app = TrayApplication.new("Screenshot grabber")
 app.icon_filename = '../icon.gif'

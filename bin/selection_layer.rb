@@ -1,6 +1,6 @@
 include Java
 
-require 'screenshot'
+# require 'screenshot'
 
 import java.awt.Color
 import java.awt.Robot
@@ -32,16 +32,16 @@ class SelectionLayer < JFrame
     self.canvas = SelectionCanvas.new(self)
       # MouseAction records mouse movements
       action = MouseAction.new(self.canvas)
-      self.canvas.addMouseListener(action)
-      self.canvas.addMouseMotionListener(action)
+      self.canvas.add_mouse_listener(action)
+      self.canvas.add_mouse_motion_listener(action)
     getContentPane.add(self.canvas)
 
     begin
-      AWTUtilities.setWindowOpacity(self, (0.3).to_f)
+      AWTUtilities.set_window_opacity(self, (0.3).to_f)
     rescue
       self.canvas.transparency_illusion
       puts "ERROR: Transparant layer not supported. Running GNOME?"
-      puts "GNOME fix running, more CPU intensive, sorry."
+      # puts "GNOME fix running, more CPU intensive, sorry."
     end
 
     self.set_visible(true)
@@ -51,7 +51,6 @@ class SelectionLayer < JFrame
 end
 
 class SelectionCanvas < JComponent
-  include java.awt.event
   attr_accessor :frame, :image, :transparency_supported
   
   def initialize(f)
@@ -98,12 +97,12 @@ class SelectionCanvas < JComponent
   def draw_rect(x,y,width,height)
     g = get_graphics
     paint(g) # Restore layer => Remove previous rectangle
-    g.setColor(Color.red)
+    g.set_color(Color.red)
     
     c = get_coordinates(x,y,width,height)
     
     # Create selection rectangle
-    g.drawRect(c[:x], c[:y], c[:width], c[:height])
+    g.draw_rect(c[:x], c[:y], c[:width], c[:height])
   end
   
   def close
